@@ -37,10 +37,13 @@ __all__ = [
 ]
 
 
-def parse_msg(msg: Union[dict, str, bytes]) -> dict:
+def parse_msg(msg: Union[dict, str, bytes]) -> Union[dict, str]:
     if type(msg) is dict:
         return msg
-    return json.loads(msg)
+    try:
+        msg = json.loads(msg)
+    except:
+        return str(msg)
 
 
 @attr.s
