@@ -29,6 +29,8 @@ from terra_sdk.core.public_key import (
 )
 from terra_sdk.core.signature_v2 import SignatureV2
 from terra_sdk.util.json import JSONSerializable
+from terra_sdk.core.wasm.msgs import MsgExecuteContract
+from terra_sdk.core.bank.msgs import MsgSend, MsgMultiSend
 
 __all__ = [
     "SignMode",
@@ -181,8 +183,9 @@ class TxBody(JSONSerializable):
 
     @classmethod
     def from_data(cls, data: dict) -> TxBody:
+        important_msgs = list(map(lambda m: m.type_url, [MsgExecuteContract, MsgSend, MsgMultiSend]))
         return cls(
-            [Msg.from_data(m) for m in data["messages"]],
+            [Msg.from_data(m) for m in data["messages"] if m['@type'] in important_msgs],
             data["memo"],
             data["timeout_height"] if data["timeout_height"] else 0,
         )
