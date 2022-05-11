@@ -138,6 +138,8 @@ class AsyncTxAPI(BaseAsyncAPI):
             TxInfo: transaction info
         """
         res = await self._c._get(f"/cosmos/tx/v1beta1/txs/{tx_hash}")
+        if res["tx_response"]["code"] != 0:
+            return res["tx_response"]["code"]
         return TxInfo.from_data(res["tx_response"])
 
     async def create(
